@@ -22,6 +22,7 @@ module Flickr
 
     private
     def dispatch(query)
+      puts query
       response = Hpricot.XML(open(query).read)
       raise Failure, response.at(:err)['msg'] unless response.search(:err).empty?
       return response
