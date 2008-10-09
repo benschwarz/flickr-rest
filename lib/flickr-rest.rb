@@ -4,7 +4,7 @@ require 'open-uri'
 
 module Flickr
   class Query
-    VERSION = '0.0.1'
+    VERSION = '0.1.0'
     API_BASE = "http://api.flickr.com/services/rest/"
     API_KEY = "2b60171843b346aa104e3a38d0129e5e"
     class Failure < StandardError; end
@@ -22,7 +22,6 @@ module Flickr
 
     private
     def dispatch(query)
-      puts query
       response = Hpricot.XML(open(query).read)
       raise Failure, response.at(:err)['msg'] unless response.search(:err).empty?
       return response
