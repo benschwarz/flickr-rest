@@ -19,3 +19,4 @@ flickr.execute('flickr.test.echo') => #<Hpricot::Doc{} *snip*
 
 Then use simple Hpricot selectors to traverse through the tree. 
 
+Its also worth checking out flickr-wrapper, which uses this as a dependency
