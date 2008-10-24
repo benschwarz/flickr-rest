@@ -1,4 +1,9 @@
-require 'rubygems'
+begin
+  require 'minigems'
+rescue LoadError
+  require 'rubygems'
+end
+
 require 'hpricot'
 require 'open-uri'
 
