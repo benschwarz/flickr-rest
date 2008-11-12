@@ -22,7 +22,6 @@ module Flickr
 
     private
     def dispatch(query)
-      puts query
       response = Hpricot.XML(open(query).read)
       raise Failure, response.at(:err)['msg'] unless response.search(:err).empty?
       return response
@@ -30,10 +29,10 @@ module Flickr
   
     def build_query(method, params={})
       url = []
-        opts = {
+      opts = {
         :method => method,
         :api_key => API_KEY,
-        :user_id => @user_id,
+        :user_id => @user_id
       }.merge(params).each do |key, value|
         url << "#{key}=#{value}"
       end
