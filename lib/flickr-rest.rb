@@ -1,10 +1,15 @@
-require 'rubygems'
+begin
+  require 'minigems'
+rescue LoadError
+  require 'rubygems'
+end
+
 require 'hpricot'
 require 'open-uri'
 
 module Flickr
   class Query
-    VERSION = '0.0.1'
+    VERSION = '0.1.0'
     API_BASE = "http://api.flickr.com/services/rest/"
     API_KEY = "2b60171843b346aa104e3a38d0129e5e"
     class Failure < StandardError; end
