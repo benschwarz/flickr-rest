@@ -1,13 +1,13 @@
 Gem::Specification.new do |s|
   s.name = "flickr-rest"
-  s.version = "0.1.0"
-  s.date = "2008-10-09"
+  s.version = "0.1.1"
+  s.date = "2008-11-17"
   s.summary = "A light interface to call flickr 'restful' api methods"
   s.email = "ben@germanforblack.com"
   s.homepage = "http://github.com/benschwarz/flickr-rest"
   s.description = "A light interface to call flickr 'restful' api methods"
   s.authors = ["Ben Schwarz"]
-  s.files = ["README", "flickr-rest.gemspec", "lib/flickr-rest.rb"]
+  s.files = ["README.markdown", "flickr-rest.gemspec", "lib/flickr-rest.rb"]
   s.require_path = "lib"
   
   # Deps
