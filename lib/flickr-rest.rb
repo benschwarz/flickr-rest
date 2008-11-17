@@ -9,20 +9,23 @@ require 'open-uri'
 
 module Flickr
   class Query
-    VERSION = '0.1.0'
+    VERSION = '0.1.1'
     API_BASE = "http://api.flickr.com/services/rest/"
-    API_KEY = "2b60171843b346aa104e3a38d0129e5e"
+    
     class Failure < StandardError; end
+    class ApiKeyRequired < StandardError; end
     
     # @param user_id - Your flickr user id
     def initialize(user_id)
       @user_id = user_id
     end
     
-    # @param api_method - flickr.test.echo
-    # @param params={}  - :photo_id => 2929112139
+    # @param api_method eg: flickr.test.echo
+    # @param params={}  eg: :photo_id => 2929112139
     def execute(api_method, params={})
-      dispatch(build_query(api_method, params))
+      raise ApiKeyRequired, "set your flickr API key using Flickr::Query.API_KEY = ''" if API_KEY.nil?
+      
+      dispatch(build_query(api_method, params)) 
     end
 
     private
@@ -39,7 +42,7 @@ module Flickr
         :api_key => API_KEY,
         :user_id => @user_id
       }.merge(params).each do |key, value|
-        url << "#{key}=#{value}"
+        url << "#{key}=#{value}" unless value.empty?
       end
 
       return API_BASE + "?" + url.join("&")
