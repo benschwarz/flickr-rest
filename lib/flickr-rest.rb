@@ -42,7 +42,7 @@ module Flickr
         :api_key => API_KEY,
         :user_id => @user_id
       }.merge(params).each do |key, value|
-        url << "#{key}=#{value}" unless value.empty?
+        url << "#{key}=#{value}" unless value.nil?
       end
 
       return API_BASE + "?" + url.join("&")
