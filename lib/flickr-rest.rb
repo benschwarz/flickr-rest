@@ -1,37 +1,24 @@
-begin
-  require 'minigems'
-rescue LoadError
-  require 'rubygems'
-end
-
-require 'hpricot'
+require 'json'
 require 'open-uri'
 
 module Flickr
   class Query
-    VERSION = '0.1.1'
-    API_BASE = "http://api.flickr.com/services/rest/"
+    VERSION       = "0.2.0".freeze
+    API_BASE      = "http://api.flickr.com/services/rest/".freeze
     
     class Failure < StandardError; end
-    class ApiKeyRequired < StandardError; end
-    
-    # @param user_id - Your flickr user id
-    def initialize(user_id)
-      @user_id = user_id
-    end
-    
+
     # @param api_method eg: flickr.test.echo
     # @param params={}  eg: :photo_id => 2929112139
-    def execute(api_method, params={})
-      raise ApiKeyRequired, "set your flickr API key using Flickr::Query.API_KEY = ''" if API_KEY.nil?
-      
-      dispatch(build_query(api_method, params)) 
+    def initialize
+      @@config ||= YAML::load(File.open(CONFIG_PATH))
+    rescue NameError
+      raise Failure, "set your flickr API key and shared secret with a YAML file and point it to Flickr::Query.CONFIG_PATH = 'my-config.yml'"
     end
-
-    private
-    def dispatch(query)
-      response = Hpricot.XML(open(query).read)
-      raise Failure, response.at(:err)['msg'] unless response.search(:err).empty?
+    
+    def request(api_method, params = {})
+      response = JSON.parse(open(build_query(api_method, params)).read)
+      raise Failure, response["message"] if response["stat"] == "fail"
       return response
     end
   
@@ -39,9 +26,9 @@ module Flickr
       url = []
       opts = {
         :method => method,
-        :api_key => API_KEY,
-        :user_id => @user_id
-      }.merge(params).each do |key, value|
+        :nojsoncallback => 1,
+        :format => "json"
+      }.merge(params).merge(@@config).each do |key, value|
         url << "#{key}=#{value}" unless value.nil?
       end
 
