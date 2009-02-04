@@ -8,16 +8,11 @@ If you want a flickr api wrapper, use the flickr gem.
 
 # Usage
 
-  require 'flickr-rest'
+    require 'flickr-rest'
+    Flickr::Query::CONFIG_PATH = '/path/to/flickr.yml'
+    flickr = Flickr::Query.new
 
-# My API key has been set as the default. Flickr probably won't like that.
+    flickr.request('flickr.test.echo') 
 
-  Flickr::Query::API_KEY = 'your-api-key-here'
-  flickr = Flickr::Query.new 'your-user-id-here'
 
-  flickr.execute('flickr.test.echo') 
-
-=> #<Hpricot::Doc{} *snip*
-
-Then use simple Hpricot selectors to traverse through the tree. 
 
