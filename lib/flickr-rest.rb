@@ -19,10 +19,9 @@ module Flickr
     
     def request(api_method, params = {})
       response = JSON.parse(open(build_query(api_method, params)).read)
-      raise Failure, response["message"] if response.delete("stat") == "fail"
-      name, response = response.to_a.first if response.size == 1
-      
-      unnest(response)
+      raise Failure, response["message"] if response.delete("stat") == "fail"      
+      r = mash(response)
+      unnest(r)
     end
     
     private
@@ -39,16 +38,29 @@ module Flickr
       return API_BASE + "?" + url.join("&")
     end
     
-    def unnest(h)
-      return h unless h.is_a? Hash
-      if h.keys == ["_content"]
-        h["_content"]
+    def mash(h)
+      if h.size == 1 and h.is_a? Hash
+        return mash(h.delete(h.keys.first))
       else
-        h.inject({}) do |h, kv|
-          k,v = *kv
-          h[k.to_sym] = unnest(v)
-          h
+        return h
+      end
+    end
+    
+    def unnest(h)      
+      if h.is_a? Hash
+        if h.keys == ["_content"]
+          h["_content"]
+        else
+          h.inject({}) do |h, kv|
+            k,v = *kv
+            h[k.to_sym] = unnest(v)
+            h
+          end
         end
+      elsif h.is_a? Array
+        h.collect{|i| unnest(i) }
+      else
+        h
       end
     end
     
