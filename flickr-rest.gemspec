@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "flickr-rest"
-  s.version = "0.2"
+  s.version = "0.2.1"
   s.date = "2008-11-17"
   s.summary = "A light interface to call flickr 'restful' api methods"
   s.email = "ben@germanforblack.com"
