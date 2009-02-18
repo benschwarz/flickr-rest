@@ -1,9 +1,10 @@
+require 'rubygems'
 require 'json'
 require 'open-uri'
 
 module Flickr
   class Query
-    VERSION       = "0.2.0".freeze
+    VERSION       = "0.2.1".freeze
     API_BASE      = "http://api.flickr.com/services/rest/".freeze
     
     class Failure < StandardError; end
@@ -18,10 +19,13 @@ module Flickr
     
     def request(api_method, params = {})
       response = JSON.parse(open(build_query(api_method, params)).read)
-      raise Failure, response["message"] if response["stat"] == "fail"
-      return response
+      raise Failure, response["message"] if response.delete("stat") == "fail"
+      name, response = response.to_a.first if response.size == 1
+      
+      unnest(response)
     end
-  
+    
+    private
     def build_query(method, params={})
       url = []
       opts = {
@@ -34,5 +38,19 @@ module Flickr
 
       return API_BASE + "?" + url.join("&")
     end
+    
+    def unnest(h)
+      return h unless h.is_a? Hash
+      if h.keys == ["_content"]
+        h["_content"]
+      else
+        h.inject({}) do |h, kv|
+          k,v = *kv
+          h[k.to_sym] = unnest(v)
+          h
+        end
+      end
+    end
+    
   end
 end
