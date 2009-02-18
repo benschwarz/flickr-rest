@@ -4,7 +4,7 @@ require 'open-uri'
 
 module Flickr
   class Query
-    VERSION       = "0.2.1".freeze
+    VERSION       = "0.2.2".freeze
     API_BASE      = "http://api.flickr.com/services/rest/".freeze
     
     class Failure < StandardError; end
