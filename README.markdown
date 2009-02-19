@@ -10,9 +10,14 @@ If you want a flickr api wrapper, use the flickr gem.
 
     require 'flickr-rest'
     Flickr::Query::CONFIG_PATH = '/path/to/flickr.yml'
-    flickr = Flickr::Query.new
+    flickr = Flickr::Query.new('flickr.test.echo')
 
-    flickr.request('flickr.test.echo') 
+    # Raw JSON response (String)
+    flickr.raw
+    => '{"api_key":{"_content":"2b60171843b346aa104e3a38d0129e5e"}, "format":{"_content":"json"}, "nojsoncallback":{"_content":"1"}, "method":{"_content":"flickr.test.echo"}, "stat":"ok"}'
 
+    # A clean, tidy ruby object
+    flickr.parsed
+    => {:api_key=>"2b60171843b346aa104e3a38d0129e5e", :format=>"json", :method=>"flickr.test.echo", :nojsoncallback=>"1"}
 
 

@@ -4,34 +4,41 @@ require 'open-uri'
 
 module Flickr
   class Query
-    VERSION       = "0.2.2".freeze
+    VERSION       = "0.2.3".freeze
     API_BASE      = "http://api.flickr.com/services/rest/".freeze
+    
+    attr_reader :raw
     
     class Failure < StandardError; end
 
     # @param api_method eg: flickr.test.echo
     # @param params={}  eg: :photo_id => 2929112139
-    def initialize
+    def initialize(method, params={})
       @@config ||= YAML::load(File.open(CONFIG_PATH))
+      @method, @params = method, params
+      request
     rescue NameError
       raise Failure, "set your flickr API key and shared secret with a YAML file and point it to Flickr::Query.CONFIG_PATH = 'my-config.yml'"
     end
-    
-    def request(api_method, params = {})
-      response = JSON.parse(open(build_query(api_method, params)).read)
-      raise Failure, response["message"] if response.delete("stat") == "fail"      
-      r = mash(response)
-      unnest(r)
+        
+    def parsed
+      json = JSON.parse(@raw)
+      raise Failure, json["message"] if json.delete("stat") == "fail"
+      return unnest(mash(json))
     end
     
     private
-    def build_query(method, params={})
+    def request
+      @raw = open(build_query).read
+    end
+    
+    def build_query
       url = []
       opts = {
-        :method => method,
+        :method => @method,
         :nojsoncallback => 1,
         :format => "json"
-      }.merge(params).merge(@@config).each do |key, value|
+      }.merge(@params).merge(@@config).each do |key, value|
         url << "#{key}=#{value}" unless value.nil?
       end
 
